@@ -1,0 +1,50 @@
+#!/bin/sh
+BASEPATH=$(pwd)
+echo $BASEPATH
+
+case $1 in
+	'enable') echo 'enable service'
+		set -ex
+		ln -s $BASEPATH/system/${2}.service /etc/systemd/system/${2}.service
+		systemctl enable ${2}.service
+		systemctl restart ${2}.service
+		set +ex
+		;;
+	'disable') echo 'disable service'
+		set -ex
+		systemctl stop ${2}.service
+		systemctl disable ${2}.service
+		set +ex
+		if [ -f /etc/systemd/system/${2}.service ]; then
+			set -ex
+			unlink /etc/systemd/system/${2}.service
+			set +ex
+		else 
+			echo "File /etc/systemd/system/${2}.service not exists, do not need to unlink"
+		fi
+		;;
+	'start') echo 'start service'
+		set -ex
+		systemctl daemon-reload
+		systemctl restart ${2}.service
+		set +ex
+		;;
+	'stop') echo 'stop service'
+		set -ex
+		systemctl stop ${2}.service
+		set +ex
+		;;
+	'status') echo 'status of service'
+		set -ex
+		systemctl status ${2}.service
+		set +ex
+		;;
+	'logs') echo 'view logs of service'
+		set -ex
+		journalctl -xe -u ${2} -f
+		set +ex
+		;;
+	*)	echo "Usage: ${0} enable|disable|start serviceName"
+		;;
+esac
+

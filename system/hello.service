@@ -1,0 +1,12 @@
+[Unit]
+Description=Hello Service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/ls -al
+
+[Install]
+WantedBy=multi-user.target
+
