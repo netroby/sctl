@@ -5,7 +5,11 @@ echo $BASEPATH
 case $1 in
 	'enable') echo 'enable service'
 		set -ex
-		ln -s $BASEPATH/system/${2}.service /etc/systemd/system/${2}.service
+		if [ -f $BASEPATH/system/${2}.service ];then
+		    if [ ! -f /etc/systemd/system/${2}.service ]; then
+		        ln -s $BASEPATH/system/${2}.service /etc/systemd/system/${2}.service
+		    fi
+		fi
 		systemctl enable ${2}.service
 		systemctl restart ${2}.service
 		set +ex
@@ -27,11 +31,13 @@ case $1 in
 		set -ex
 		systemctl daemon-reload
 		systemctl restart ${2}.service
+		systemctl status ${2}.service
 		set +ex
 		;;
 	'stop') echo 'stop service'
 		set -ex
 		systemctl stop ${2}.service
+		systemctl status ${2}.service
 		set +ex
 		;;
 	'status') echo 'status of service'
