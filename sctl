@@ -5,9 +5,9 @@ echo $BASEPATH
 case $1 in
 	'enable') echo 'enable service'
 		set -ex
-		if [ -f $BASEPATH/system/${2}.service ];then
+		if [ -f $BASEPATH/${2}.service ];then
 		    if [ ! -f /etc/systemd/system/${2}.service ]; then
-		        ln -s $BASEPATH/system/${2}.service /etc/systemd/system/${2}.service
+		        ln -s $BASEPATH/${2}.service /etc/systemd/system/${2}.service
 		    fi
 		fi
 		systemctl enable ${2}.service
@@ -22,6 +22,7 @@ case $1 in
 		if [ -f /etc/systemd/system/${2}.service ]; then
 			set -ex
 			unlink /etc/systemd/system/${2}.service
+			systemctl daemon-reload
 			set +ex
 		else 
 			echo "File /etc/systemd/system/${2}.service not exists, do not need to unlink"
@@ -53,4 +54,3 @@ case $1 in
 	*)	echo "Usage: ${0} enable|disable|start serviceName"
 		;;
 esac
-
